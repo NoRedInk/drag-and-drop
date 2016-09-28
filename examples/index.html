@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+        #draggable-placeholder {
+          cursor: -webkit-grabbing;
+          cursor: grabbing;
+        }
+
+        [data-draggable-id], #draggable-placeholder {
+          cursor: -webkit-grab;
+          cursor: grab;
+        }
+
+        .bucket {
+          border: 2px solid transparent;
+          margin: 20px;
+        }
+
+        .eligible-bucket {
+          border: 2px solid teal;
+        }
+        </style>
+    </head>
+    <body>
+        <div id="elm-container"></div>
+
+        <script src="elm.js"></script>
+        <script src="../lib/draggable.js"></script>
+        <script>
+          var app = Elm.Example.embed(document.getElementById("elm-container"));
+          var draggableQuerySelector = "[data-draggable-id]";
+          var bucketQuerySelector = "[data-bucket-id]";
+
+          var dragStart = app.ports.dragStart.send;
+          var dragMove = app.ports.dragMove.send;
+
+          function dragStop() {
+            app.ports.dragStop.send(null);
+          }
+
+          function getDraggableId(elem) {
+            return elem.dataset.draggableId
+          }
+
+          function getBucketId(elem) {
+            return elem.dataset.bucketId
+          }
+
+          options = {
+            draggableDataAttr: "draggableId",
+            bucketDataAttr: "bucketId",
+            bucketQuerySelector: "[data-bucket-id]",
+            placeholderId: "draggable-placeholder",
+            on: {
+              dragStart: app.ports.dragStart.send,
+              dragMove: app.ports.dragMove.send,
+              dragStop: function() { return app.ports.dragStop.send(null) }
+            },
+            offsets: {
+              touch: {x: 0, y: 50}, // move draggables up 50px when dragging so your finger doesn't cover them
+              mouse: {x: 0, y: 0}
+            }
+          }
+
+          Draggable.setUpDraggableEvents(options);
+        </script>
+    </body>
+</html>
